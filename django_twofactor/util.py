@@ -1,12 +1,17 @@
 from base64 import b32encode
 from binascii import hexlify
+import traceback
 from urllib import urlencode
 from django_twofactor.encutil import encrypt, decrypt, _gen_salt
 from oath import accept_totp
 from django.conf import settings
+import logging
+
+log = logging.getLogger(__name__)
 
 # Get best `random` implementation we can.
 import random
+
 try:
     random = random.SystemRandom()
 except:
@@ -24,17 +29,21 @@ DEFAULT_TOKEN_TYPE = TOTP_OPTIONS.get('default_token_type', "dec6")
 
 ENCRYPTION_KEY = getattr(settings, "TWOFACTOR_ENCRYPTION_KEY", "")
 
+
 def random_seed(rawsize=10):
     """ Generates a random seed as a raw byte string. """
-    return ''.join([ chr(random.randint(0, 255)) for i in range(rawsize) ])
+    return ''.join([chr(random.randint(0, 255)) for i in range(rawsize)])
+
 
 def encrypt_value(raw_value):
     salt = _gen_salt()
-    return "%s$%s" %  (salt, encrypt(raw_value, ENCRYPTION_KEY+salt))
+    return "%s$%s" % (salt, encrypt(raw_value, ENCRYPTION_KEY + salt))
+
 
 def decrypt_value(salted_value):
     salt, encrypted_value = salted_value.split("$", 1)
-    return decrypt(encrypted_value, ENCRYPTION_KEY+salt)
+    return decrypt(encrypted_value, ENCRYPTION_KEY + salt)
+
 
 def check_raw_seed(raw_seed, auth_code, token_type=None):
     """
@@ -43,30 +52,40 @@ def check_raw_seed(raw_seed, auth_code, token_type=None):
     """
     if not token_type:
         token_type = DEFAULT_TOKEN_TYPE
-    return accept_totp(
-        auth_code,
-        hexlify(raw_seed),
-        token_type,
-        period=PERIOD,
-        forward_drift=FORWARD_DRIFT,
-        backward_drift=BACKWARD_DRIFT
-    )[0]
+    try:
+        result = accept_totp(
+            response=auth_code,
+            key=hexlify(raw_seed),
+            format=token_type,
+            period=PERIOD,
+            forward_drift=FORWARD_DRIFT,
+            backward_drift=BACKWARD_DRIFT
+        )
+        log.debug(result)
+        return result[0]
+    except Exception as e:
+        log.debug(e)
+        log.debug(traceback.format_exc())
+
+    return False
+
 
 def get_google_url(raw_seed, hostname=None):
     # Note: Google uses base32 for it's encoding rather than hex.
-    b32secret = b32encode( raw_seed )
+    b32secret = b32encode(raw_seed)
     if not hostname:
         from socket import gethostname
+
         hostname = gethostname()
-    
+
     data = "otpauth://totp/%(hostname)s?secret=%(secret)s" % {
-        "hostname":hostname,
-        "secret":b32secret,
+        "hostname": hostname,
+        "secret": b32secret,
     }
     url = "https://chart.googleapis.com/chart?" + urlencode({
-        "chs":"200x200",
-        "chld":"M|0",
-        "cht":"qr",
-        "chl":data
+        "chs": "200x200",
+        "chld": "M|0",
+        "cht": "qr",
+        "chl": data
     })
     return url
