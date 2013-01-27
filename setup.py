@@ -19,7 +19,7 @@ setup(
     long_description=open('README.mdown').read(),
     install_requires=[
         'oath>=1.0',
-        'django>=1.4'
+        'django>=1.4',
         'pycrypto'
     ]
 )
