@@ -8,6 +8,25 @@ log = logging.getLogger(__name__)
 
 class TwoFactorAuthBackend(ModelBackend):
     def authenticate(self, username=None, password=None, token=None):
+        """
+        authenticate a username with a password against the ModelBackend first,
+        on success it authenticates the user against the TwoFactor Algorithm
+        if a token is given and the given user has configured TwoFactor Auth
+
+        One speciality is available for BasicAuth compatibility:
+            token can be pushed into username like this "12345\myusername"
+            therefore the NT known notation of domain and user is still
+            possible like this: "12345\mydomain\username"
+
+        :param username: username that ModelBackend knows as this
+        :param password: password that ModelBackend can auth against
+        :param token: token that can be checked if user has configured TwoFactor
+        :return: User or None
+        """
+        if token is None and '\\' in username:
+            # here some specials, allow the left site of \ in username to be a token
+            (token, username) = username.split('\\', 1)
+
         # Validate username and password first
         user_or_none = super(TwoFactorAuthBackend, self).authenticate(username, password)
 
