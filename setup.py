@@ -9,8 +9,8 @@ setup(
     version=version,
     author='Sven Aßmann',
     author_email='sven.assmann@lubico.biz',
-    description='django auth integration with twofactor and google authentication',
-    keywords='django auth google multifactor twofactor',
+    description='django auth integration with twofactor and googleauthentication',
+    keywords='django auth googleauthenticator multifactor twofactor',
     url='https://github.com/sassman/django-twofactor',
     #license='LICENSE.txt',
     packages=[
