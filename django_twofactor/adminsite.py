@@ -5,11 +5,17 @@ from django_twofactor.forms import (ResetTwoFactorAuthForm,
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django_twofactor.models import UserAuthToken
+from django.conf import settings
 
 class TwoFactorAuthAdminSite(AdminSite):
     login_form = TwoFactorAdminAuthenticationForm
     login_template = "twofactor_admin/twofactor_login.html"
     password_change_template = "twofactor_admin/registration/password_change_form.html"
+
+    def __init__(self, *args, **kwargs):
+        if 'grappelli' in settings.INSTALLED_APPS:
+            self.login_template = 'admin/includes_grappelli/twofactor_login.html'
+        super(TwoFactorAuthAdminSite, self).__init__(*args, **kwargs)
 
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url
