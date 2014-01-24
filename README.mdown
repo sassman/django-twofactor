@@ -74,10 +74,12 @@ What does not work:
 * [python-oath][py_oath] -- not to be confused with "OAuth"
 * [django][django]
 
-Optionally, for performance:
+Optionally:
 
 * [PyCrypto](https://www.dlitz.net/software/pycrypto/) -- See *PyCrypto*
   section below, under *Security Considerations*.
+* [django-grappelli](https://github.com/sehmaschine/django-grappelli/) -- grid-based
+  alternative/extension to the Django administration interface.
 
 [py_oath]: https://github.com/bdauvergne/python-oath
 [django]: https://www.djangoproject.com/
