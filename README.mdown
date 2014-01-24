@@ -1,5 +1,11 @@
 # django-twofactor
 
+&copy; 2011-2013 [Mike Tigas][miketigas] ([@mtigas](https://twitter.com/mtigas))  
+[MIT License][license]
+
+[miketigas]: https://mike.tig.as/
+[license]: https://github.com/mtigas/django-twofactor/blob/master/LICENSE
+
 A django app that allows supplementing the default `django.contrib.auth` login
 system with two-factor authentication using the Time-Based One-Time Password
 (TOTP) Algorithm spec ([RFC 6238][rfc6238]).
@@ -20,6 +26,17 @@ Some notes:
 
 [rfc4226]: http://tools.ietf.org/html/rfc4226
 [poc_link]: https://gist.github.com/445567d2206a82a4e684
+
+---
+
+## Possible alternatives
+
+This project hasn't been touched in a while, but the proof of concept still works.
+Other similar projects may have more fleshed-out APIs and integration:
+
+* [django-otp](https://bitbucket.org/psagers/django-otp) ([PyPI](https://pypi.python.org/pypi/django-otp))
+* [django-twostepauth](https://bitbucket.org/cogni/django-twostepauth) ([PyPI](https://pypi.python.org/pypi/django-twostepauth))
+* [django-two-factor-auth](https://github.com/Bouke/django-two-factor-auth)
 
 ---
 
